@@ -1,13 +1,35 @@
 package com.dugger.pricetracker;
 
+import com.dugger.pricetracker.data.models.demotable.DemoTable;
+import com.dugger.pricetracker.data.models.demotable.DemoTableRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class PricetrackerApplication {
 
+	private static final Logger logger = LoggerFactory.getLogger(PricetrackerApplication.class);
+
 	public static void main(String[] args) {
 		SpringApplication.run(PricetrackerApplication.class, args);
+	}
+
+	@Bean
+	public CommandLineRunner demo(DemoTableRepository repository) {
+		return (args) -> {
+			logger.info("All rows");
+			logger.info("######################");
+			repository.findAll().spliterator().forEachRemaining(row -> logger.info(row.toString()));
+			logger.info("");
+
+			logger.info("Rows with last name Dugger");
+			logger.info("#######################");
+			repository.findByLastName("Dugger").stream().forEach(row -> logger.info(row.toString()));
+		};
 	}
 
 }
