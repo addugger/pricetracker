@@ -1,6 +1,5 @@
 package com.dugger.pricetracker.data.models.demotable;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
 
 import javax.persistence.*;
