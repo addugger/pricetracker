@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 abstract public class Request {
   protected static final Logger logger = LoggerFactory.getLogger(Get.class);
   protected static final HttpClient client = HttpClient.newHttpClient();
+
+  public static final Map<String, String> emptyParams = Collections.emptyMap();
 
   protected Map<String, String> params;
   protected Map<String, String> headers;

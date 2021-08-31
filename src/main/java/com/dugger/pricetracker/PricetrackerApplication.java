@@ -1,6 +1,5 @@
 package com.dugger.pricetracker;
 
-import com.dugger.pricetracker.data.models.demotable.DemoTable;
 import com.dugger.pricetracker.data.models.demotable.DemoTableRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import org.slf4j.Logger;
@@ -20,11 +19,13 @@ public class PricetrackerApplication {
   }
 
   @Bean
-  public CommandLineRunner demo(DemoTableRepository repository) {
+  public CommandLineRunner demo(DemoTableRepository repository, TCGPlayer tcgPlayer) {
     return (args) -> {
-      TCGPlayer tcgp = new TCGPlayer();
-      tcgp.authenticate();
-      logger.info("TCGP Bearer token: " + tcgp.bearerToken.getToken());
+
+      tcgPlayer.authenticate();
+      logger.info("TCGP Bearer token: " + tcgPlayer.bearerToken.getToken());
+
+      logger.info("Cat 1 details: \n" + tcgPlayer.getCategoryDetails(1));
 
       logger.info("All rows");
       logger.info("######################");
@@ -33,7 +34,7 @@ public class PricetrackerApplication {
 
       logger.info("Rows with last name Dugger");
       logger.info("#######################");
-      repository.findByLastName("Dugger").stream().forEach(row -> logger.info(row.toString()));
+      repository.findByLastName("Dugger").forEach(row -> logger.info(row.toString()));
     };
   }
 

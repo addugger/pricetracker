@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 /**
  * Class for auto mapping result of TCGP's authenticate method to POJO
  */
+// TODO add errors field
 public class Authenticate {
   @JsonProperty("access_token")
   String accessToken;
