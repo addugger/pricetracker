@@ -4,6 +4,7 @@ import com.dugger.pricetracker.http.Get;
 import com.dugger.pricetracker.http.Post;
 import com.dugger.pricetracker.http.Request;
 import com.dugger.pricetracker.http.tcgp.models.Authenticate;
+import com.dugger.pricetracker.http.tcgp.models.CategoryDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -64,11 +65,18 @@ public class TCGPlayer {
     else return true;
   }
 
-  public String getCategoryDetails(int categoryId) {
+  public CategoryDetails getCategoryDetails(int categoryId) {
     Get get = getBaseGet();
     get.setParams(Request.emptyParams);
     get.setEndpoint("/catalog/categories/" + categoryId);
-    return get.sendRequest();
+    String response = get.sendRequest();
+    CategoryDetails categoryDetails = null;
+    try {
+      categoryDetails = mapper.readValue(response, CategoryDetails.class);
+    } catch (JsonProcessingException e) {
+      logger.error("There was an issue parsing the response from the get category details endpoint", e);
+    }
+    return categoryDetails;
   }
 
   public Get getBaseGet() { return new Get(null, headers, urlBase, null, true); }
