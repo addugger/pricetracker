@@ -3,8 +3,10 @@ package com.dugger.pricetracker.http.tcgp;
 import com.dugger.pricetracker.http.Get;
 import com.dugger.pricetracker.http.Post;
 import com.dugger.pricetracker.http.Request;
+import com.dugger.pricetracker.http.models.JsonPojo;
 import com.dugger.pricetracker.http.tcgp.models.Authenticate;
-import com.dugger.pricetracker.http.tcgp.models.CategoryDetails;
+import com.dugger.pricetracker.http.tcgp.models.Category;
+import com.dugger.pricetracker.http.tcgp.models.Groups;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -65,21 +68,34 @@ public class TCGPlayer {
     else return true;
   }
 
-  public CategoryDetails getCategoryDetails(int categoryId) {
+  public Category getCategoryDetails(int categoryId) {
     Get get = getBaseGet();
     get.setParams(Request.emptyParams);
     get.setEndpoint("/catalog/categories/" + categoryId);
-    String response = get.sendRequest();
-    CategoryDetails categoryDetails = null;
-    try {
-      categoryDetails = mapper.readValue(response, CategoryDetails.class);
-    } catch (JsonProcessingException e) {
-      logger.error("There was an issue parsing the response from the get category details endpoint", e);
-    }
-    return categoryDetails;
+    return parseResponse(get.sendRequest(), Category.class);
+  }
+
+  public Groups getCategoryGroups(int categoryId, int limit, int offset) {
+    Get get = getBaseGet();
+    Map<String, String> params = new HashMap<>();
+    params.put("limit", Integer.toString(limit));
+    params.put("offset", Integer.toString(offset));
+    get.setParams(params);
+    get.setEndpoint("/catalog/categories/" + categoryId + "/groups");
+    return parseResponse(get.sendRequest(), Groups.class);
   }
 
   public Get getBaseGet() { return new Get(null, headers, urlBase, null, true); }
 
   public Post getBasePost() { return  new Post(null, headers, urlBase, null, true); }
+
+  private <T extends JsonPojo> T parseResponse(String jsonResponse, Class<T> pojoClass) {
+    T pojo = null;
+    try {
+      pojo = mapper.readValue(jsonResponse, pojoClass);
+    } catch (JsonProcessingException e) {
+      logger.error("There was an issue parsing the response into class " + pojoClass.toString(), e);
+    }
+    return pojo;
+  }
 }
