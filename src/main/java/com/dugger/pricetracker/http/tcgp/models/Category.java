@@ -1,24 +1,15 @@
 package com.dugger.pricetracker.http.tcgp.models;
 
-import com.dugger.pricetracker.http.models.JsonPojo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * Class for auto mapping result of TCGP's category detail method to POJO
  */
-public class Category implements JsonPojo {
-  @JsonProperty
-  boolean success;
-  @JsonProperty
-  List<String> errors;
-  @JsonProperty
-  List<CategoryResult> results;
+public class Category extends TcgGetJsonPojo<Category.CategoryResult> {
 
-
-  private static class CategoryResult {
+  protected static class CategoryResult implements TcgResult {
     @JsonProperty
     int categoryId;
     @JsonProperty

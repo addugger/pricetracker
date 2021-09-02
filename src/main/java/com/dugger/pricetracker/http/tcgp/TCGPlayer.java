@@ -7,6 +7,7 @@ import com.dugger.pricetracker.http.models.JsonPojo;
 import com.dugger.pricetracker.http.tcgp.models.Authenticate;
 import com.dugger.pricetracker.http.tcgp.models.Category;
 import com.dugger.pricetracker.http.tcgp.models.Groups;
+import com.dugger.pricetracker.http.tcgp.models.Products;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -83,6 +84,19 @@ public class TCGPlayer {
     get.setParams(params);
     get.setEndpoint("/catalog/categories/" + categoryId + "/groups");
     return parseResponse(get.sendRequest(), Groups.class);
+  }
+
+  public Products getGroupProducts(int groupId, int limit, int offset) {
+    Get get = getBaseGet();
+    Map<String, String> params = new HashMap<>();
+    params.put("limit", Integer.toString(limit));
+    params.put("offset", Integer.toString(offset));
+    params.put("groupId", Integer.toString(groupId));
+    params.put("getExtendedFields", "true");
+    params.put("includeSkus", "true");
+    get.setParams(params);
+    get.setEndpoint("/catalog/products");
+    return parseResponse(get.sendRequest(), Products.class);
   }
 
   public Get getBaseGet() { return new Get(null, headers, urlBase, null, true); }

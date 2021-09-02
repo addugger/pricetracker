@@ -1,22 +1,12 @@
 package com.dugger.pricetracker.http.tcgp.models;
 
-import com.dugger.pricetracker.http.models.JsonPojo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
-import java.util.List;
 
-public class Groups implements JsonPojo {
-    @JsonProperty
-    int totalItems;
-    @JsonProperty
-    boolean success;
-    @JsonProperty
-    List<String> errors;
-    @JsonProperty
-    List<Group> results;
+public class Groups extends TcgGetJsonPojo<Groups.Group> {
 
-    private static class Group {
+    protected static class Group implements TcgResult {
         @JsonProperty
         int groupId;
         @JsonProperty
