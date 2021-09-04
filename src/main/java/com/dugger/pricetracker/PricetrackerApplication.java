@@ -2,8 +2,7 @@ package com.dugger.pricetracker;
 
 import com.dugger.pricetracker.data.models.demotable.DemoTableRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
-import com.dugger.pricetracker.http.tcgp.models.Groups;
-import com.dugger.pricetracker.http.tcgp.models.Products;
+import com.dugger.pricetracker.http.tcgp.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -33,6 +32,16 @@ public class PricetrackerApplication {
       logger.info("Groups: " + groups);
 
       Products products = tcgPlayer.getGroupProducts(7, 10, 0);
+
+      Languages languages = tcgPlayer.getLanguages(1);
+
+      Conditions conditions = tcgPlayer.getConditions(1);
+
+      Rarities rarities = tcgPlayer.getRarities(1);
+
+      Printings printings = tcgPlayer.getPrintings(1);
+
+      logger.info("pause");
 //      logger.info("All rows");
 //      logger.info("######################");
 //      repository.findAll().spliterator().forEachRemaining(row -> logger.info(row.toString()));

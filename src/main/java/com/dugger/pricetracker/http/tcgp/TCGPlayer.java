@@ -4,10 +4,7 @@ import com.dugger.pricetracker.http.Get;
 import com.dugger.pricetracker.http.Post;
 import com.dugger.pricetracker.http.Request;
 import com.dugger.pricetracker.http.models.JsonPojo;
-import com.dugger.pricetracker.http.tcgp.models.Authenticate;
-import com.dugger.pricetracker.http.tcgp.models.Category;
-import com.dugger.pricetracker.http.tcgp.models.Groups;
-import com.dugger.pricetracker.http.tcgp.models.Products;
+import com.dugger.pricetracker.http.tcgp.models.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,15 +22,20 @@ public class TCGPlayer {
 
   public BearerToken bearerToken;
 
-  private static final String urlBase = "api.tcgplayer.com/v1.39.0";
+
+  @Value("${tcgp.api.public.key}")
+  private String clientId;
+  @Value("${tcgp.api.private.key}")
+  private String clientSecret;
+
+  @Value("${tcgp.api.domain}")
+  private String domain;
+  @Value("${tcgp.api.version}")
+  private String version;
+
   private final Map<String, String> headers;
 
   private final ObjectMapper mapper = new ObjectMapper();
-
-  @Value("${tcgp.public.key}")
-  private String clientId;
-  @Value("${tcgp.private.key}")
-  private String clientSecret;
 
   public TCGPlayer() {
     bearerToken = new BearerToken();
@@ -42,13 +43,15 @@ public class TCGPlayer {
     headers.put("Accept", "application/json");
   }
 
+  public String getUrlBase() { return domain + "/" + version; }
+
   /* returns true if success or nothing was needed. false if exception thrown */
   public boolean authenticate() {
     if (bearerToken.shouldRenew()) {
       try {
         Post post = getBasePost();
         // this is the only TCGP endpoint that doesn't include the version in the path
-        post.setUrlBase("api.tcgplayer.com");
+        post.setUrlBase(domain);
         post.setEndpoint("/token");
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "client_credentials");
@@ -99,9 +102,39 @@ public class TCGPlayer {
     return parseResponse(get.sendRequest(), Products.class);
   }
 
-  public Get getBaseGet() { return new Get(null, headers, urlBase, null, true); }
+  public Rarities getRarities(int categoryId) {
+    Get get = getBaseGet();
+    get.setParams(Request.emptyParams);
+    get.setEndpoint("/catalog/categories/" + categoryId + "/rarities");
+    return parseResponse(get.sendRequest(), Rarities.class);
+  }
 
-  public Post getBasePost() { return  new Post(null, headers, urlBase, null, true); }
+  public Printings getPrintings(int categoryId) {
+    Get get = getBaseGet();
+    get.setParams(Request.emptyParams);
+    get.setEndpoint("/catalog/categories/" + categoryId + "/printings");
+    return parseResponse(get.sendRequest(), Printings.class);
+  }
+
+  public Conditions getConditions(int categoryId) {
+    Get get = getBaseGet();
+    get.setParams(Request.emptyParams);
+    get.setEndpoint("/catalog/categories/" + categoryId + "/conditions");
+    return parseResponse(get.sendRequest(), Conditions.class);
+  }
+
+  public Languages getLanguages(int categoryId) {
+    Get get = getBaseGet();
+    get.setParams(Request.emptyParams);
+    get.setEndpoint("/catalog/categories/" + categoryId + "/languages");
+    return parseResponse(get.sendRequest(), Languages.class);
+  }
+
+
+
+  public Get getBaseGet() { return new Get(null, headers, getUrlBase(), null, true); }
+
+  public Post getBasePost() { return  new Post(null, headers, getUrlBase(), null, true); }
 
   private <T extends JsonPojo> T parseResponse(String jsonResponse, Class<T> pojoClass) {
     T pojo = null;
