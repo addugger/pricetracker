@@ -5,6 +5,7 @@ import com.dugger.pricetracker.http.Post;
 import com.dugger.pricetracker.http.Request;
 import com.dugger.pricetracker.http.models.JsonPojo;
 import com.dugger.pricetracker.http.tcgp.models.*;
+import com.dugger.pricetracker.util.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TCGPlayer {
@@ -45,31 +47,36 @@ public class TCGPlayer {
 
   public String getUrlBase() { return domain + "/" + version; }
 
-  /* returns true if success or nothing was needed. false if exception thrown */
+  /* returns true if success or nothing was needed. false if there was a problem */
   public boolean authenticate() {
     if (bearerToken.shouldRenew()) {
-      try {
-        Post post = getBasePost();
-        // this is the only TCGP endpoint that doesn't include the version in the path
-        post.setUrlBase(domain);
-        post.setEndpoint("/token");
-        Map<String, String> params = new HashMap<>();
-        params.put("grant_type", "client_credentials");
-        params.put("client_id", clientId);
-        params.put("client_secret", clientSecret);
-        post.setParams(params);
-        String authResponse = post.sendRequest();
-        Authenticate auth = mapper.readValue(authResponse, Authenticate.class);
-        bearerToken.setToken(auth.getAccessToken());
-        bearerToken.setExpiryTime(auth.getExpires().getTime());
-        headers.put("Authorization", "Bearer " + bearerToken.getToken());
-        return true;
-      } catch (JsonProcessingException e) {
-        logger.error("There was an issue parsing the response from the authenticate method", e);
-        return false;
-      }
+      Post post = getBasePost();
+      // this is the only TCGP endpoint that doesn't include the version in the path
+      post.setUrlBase(domain);
+      post.setEndpoint("/token");
+      Map<String, String> params = new HashMap<>();
+      params.put("grant_type", "client_credentials");
+      params.put("client_id", clientId);
+      params.put("client_secret", clientSecret);
+      post.setParams(params);
+      return Optional.ofNullable(parseResponse(post.sendRequest(), Authenticate.class))
+        .map(auth -> {
+          if (StringUtils.hasText(auth.getError())) {
+            logger.error(String.format(
+              "There was an error authenticating with TCGPlayer: %s. Details: %s: ",
+              auth.getError(),
+              auth.getErrorMessage()
+            ));
+            return null;
+          }
+          bearerToken.setToken(auth.getAccessToken());
+          bearerToken.setExpiryTime(auth.getExpires().getTime());
+          headers.put("Authorization", "Bearer " + bearerToken.getToken());
+          return auth;
+        })
+        .isPresent();
     }
-    else return true;
+    return true;
   }
 
   public Category getCategoryDetails(int categoryId) {
@@ -129,8 +136,6 @@ public class TCGPlayer {
     get.setEndpoint("/catalog/categories/" + categoryId + "/languages");
     return parseResponse(get.sendRequest(), Languages.class);
   }
-
-
 
   public Get getBaseGet() { return new Get(null, headers, getUrlBase(), null, true); }
 

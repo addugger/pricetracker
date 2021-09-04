@@ -25,4 +25,10 @@ public class Authenticate implements JsonPojo {
   @JsonProperty(".expires")
   @Getter
   Timestamp expires;
+  @JsonProperty
+  @Getter
+  String error;
+  @JsonProperty("error_description")
+  @Getter
+  String errorMessage;
 }

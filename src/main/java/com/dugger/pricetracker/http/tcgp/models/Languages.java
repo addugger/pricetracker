@@ -9,7 +9,7 @@ public class Languages extends TcgGetJsonPojo<Languages.Language> {
     int languageId;
     @JsonProperty
     String name;
-    @JsonProperty(value="abbr")
+    @JsonProperty("abbr")
     String abbreviation;
   }
 }
