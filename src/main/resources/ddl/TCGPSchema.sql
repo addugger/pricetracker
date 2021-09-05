@@ -1,6 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS tcgp;
 
-CREATE TABLE IF NOT EXISTS `tcgp.category` (
+CREATE TABLE IF NOT EXISTS tcgp.`category` (
     id INT PRIMARY KEY,
     name VARCHAR(255),
     modified_on TIMESTAMP,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `tcgp.category` (
     dlu TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `tcgp.group` (
+CREATE TABLE IF NOT EXISTS tcgp.`group` (
     id INT PRIMARY KEY,
     category_id INT,
     name VARCHAR(255),
@@ -21,50 +21,50 @@ CREATE TABLE IF NOT EXISTS `tcgp.group` (
     modified_on TIMESTAMP,
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`
 );
 
-CREATE TABLE iF NOT EXISTS `tcgp.rarity` (
+CREATE TABLE iF NOT EXISTS tcgp.`rarity` (
     id INT PRIMARY KEY,
     category_id INT,
     name VARCHAR(255),
     abbreviation VARCHAR(10),
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
-)
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`
+);
 
-CREATE TABLE IF NOT EXISTS `tcgp.language` (
+CREATE TABLE IF NOT EXISTS tcgp.`language` (
     id INT PRIMARY KEY,
     category_id INT,
     name VARCHAR(255),
     abbreviation VARCHAR(10),
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
-)
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`
+);
 
-CREATE TABLE IF NOT EXISTS `tcgp.condition` (
+CREATE TABLE IF NOT EXISTS tcgp.`condition` (
     id INT PRIMARY KEY,
     category_id INT,
     name VARCHAR(255),
     abbreviation VARCHAR(10),
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
-)
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`
+);
 
-CREATE TABLE IF NOT EXISTS `tcgp.printing` (
+CREATE TABLE IF NOT EXISTS tcgp.`printing` (
     id INT PRIMARY KEY,
     category_id INT,
     name VARCHAR(255),
     modified_on TIMESTAMP,
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES category(id)
-)
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`
+);
 
-CREATE TABLE IF NOT EXISTS `tcgp.product` (
+CREATE TABLE IF NOT EXISTS tcgp.`product` (
     id INT PRIMARY KEY,
     group_id INT,
     category_id INT,
@@ -76,12 +76,12 @@ CREATE TABLE IF NOT EXISTS `tcgp.product` (
     modified_on TIMESTAMP,
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (group_id) REFERENCES `group`(id),
-    FOREIGN KEY (category_id) REFERENCES category(id),
-    FOREIGN KEY (rarity_id) REFERENCES rarity(id)
+    FOREIGN KEY (group_id) REFERENCES tcgp.`group`,
+    FOREIGN KEY (category_id) REFERENCES tcgp.`category`,
+    FOREIGN KEY (rarity_id) REFERENCES tcgp.`rarity`
 );
 
-CREATE TABLE IF NOT EXISTS `tcgp.sku` (
+CREATE TABLE IF NOT EXISTS tcgp.`sku` (
     id INT PRIMARY KEY,
     product_id INT,
     language_id INT,
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS `tcgp.sku` (
     condition_id INT,
     doe TIMESTAMP,
     dlu TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES product(id),
-    FOREIGN KEY (language_id) REFERENCES `language`(id),
-    FOREIGN KEY (printing_id) REFERENCES printing(id),
-    FOREIGN KEY (condition_id) REFERENCES condition(id)
-)
+    FOREIGN KEY (product_id) REFERENCES tcgp.`product`,
+    FOREIGN KEY (language_id) REFERENCES tcgp.`language`,
+    FOREIGN KEY (printing_id) REFERENCES tcgp.`printing`,
+    FOREIGN KEY (condition_id) REFERENCES tcgp.`condition`
+);
