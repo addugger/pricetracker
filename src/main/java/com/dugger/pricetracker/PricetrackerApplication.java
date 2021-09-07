@@ -1,6 +1,6 @@
 package com.dugger.pricetracker;
 
-import com.dugger.pricetracker.data.models.demotable.DemoTableRepository;
+import com.dugger.pricetracker.data.tcgp.models.category.CategoryRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import com.dugger.pricetracker.http.tcgp.models.*;
 import org.slf4j.Logger;
@@ -20,13 +20,13 @@ public class PricetrackerApplication {
   }
 
   @Bean
-  public CommandLineRunner demo(DemoTableRepository repository, TCGPlayer tcgPlayer) {
+  public CommandLineRunner demo(CategoryRepository categoryRepository, TCGPlayer tcgPlayer) {
     return (args) -> {
 
       tcgPlayer.authenticate();
       logger.info("TCGP Bearer token: " + tcgPlayer.bearerToken.getToken());
 
-      logger.info("Cat 1 details: \n" + tcgPlayer.getCategoryDetails(1));
+      Category category = tcgPlayer.getCategoryDetails(1);
 
       Groups groups = tcgPlayer.getCategoryGroups(1, 10, 0);
       logger.info("Groups: " + groups);
@@ -40,6 +40,20 @@ public class PricetrackerApplication {
       Rarities rarities = tcgPlayer.getRarities(1);
 
       Printings printings = tcgPlayer.getPrintings(1);
+
+      Category.CategoryResult catResult = category.getResult();
+
+      com.dugger.pricetracker.data.tcgp.models.category.Category catEntity = new com.dugger.pricetracker.data.tcgp.models.category.Category();
+      catEntity.setId(catResult.getCategoryId());
+      catEntity.setName(catResult.getName());
+      catEntity.setModified_on(catResult.getModifiedOn());
+      catEntity.setDisplay_name(catResult.getDisplayName());
+      catEntity.setSealed_label(catResult.getSealedLabel());
+      catEntity.setNon_sealed_label(catResult.getNonSealedLabel());
+
+      categoryRepository.save(catEntity);
+      com.dugger.pricetracker.data.tcgp.models.category.Category catRetrieved = categoryRepository.findById(1).get();
+
 
       logger.info("pause");
 //      logger.info("All rows");

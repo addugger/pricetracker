@@ -1,6 +1,7 @@
 package com.dugger.pricetracker.http.tcgp.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 
@@ -9,7 +10,12 @@ import java.sql.Timestamp;
  */
 public class Category extends TcgGetJsonPojo<Category.CategoryResult> {
 
-  protected static class CategoryResult implements TcgResult {
+  public CategoryResult getResult() {
+    return results.size() == 1 ? results.get(0) : null;
+  }
+
+  @Getter
+  public static class CategoryResult implements TcgResult {
     @JsonProperty
     int categoryId;
     @JsonProperty

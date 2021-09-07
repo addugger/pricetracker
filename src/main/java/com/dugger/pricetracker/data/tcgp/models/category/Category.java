@@ -20,8 +20,8 @@ public class Category {
   private String name;
   private Timestamp modified_on;
   private String display_name;
-  private String sealed_name;
-  private String non_sealed_name;
+  private String sealed_label;
+  private String non_sealed_label;
   @CreationTimestamp
   private Timestamp doe;
   @UpdateTimestamp
