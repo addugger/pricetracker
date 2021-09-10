@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
-@Table(schema = "tcgp")
+@Table(schema = "tcgp", name = "tcgp_category")
 public class Category {
   @Id
   private Integer id;
