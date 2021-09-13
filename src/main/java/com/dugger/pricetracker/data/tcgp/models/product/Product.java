@@ -5,6 +5,8 @@ import com.dugger.pricetracker.data.tcgp.models.group.Group;
 import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -29,6 +31,8 @@ public class Product {
   private String clean_name;
   private String image_url;
   private Timestamp modified_on;
+  @CreationTimestamp
   private Timestamp doe;
+  @UpdateTimestamp
   private Timestamp dlu;
 }

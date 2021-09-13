@@ -1,10 +1,12 @@
 package com.dugger.pricetracker.http.tcgp.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 public class Conditions extends TcgGetJsonPojo<Conditions.Condition> {
 
-  protected static class Condition implements TcgResult {
+  @Getter
+  public static class Condition implements TcgResult {
     @JsonProperty
     int conditionId;
     @JsonProperty

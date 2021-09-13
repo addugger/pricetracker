@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Products extends TcgGetJsonPojo<Products.Product> {
-    protected static class Product implements TcgResult {
+    public static class Product implements TcgResult {
         @JsonProperty
         int productId;
         @JsonProperty

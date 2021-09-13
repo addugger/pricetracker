@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Rarities extends TcgGetJsonPojo<Rarities.Rarity> {
 
-  protected static class Rarity implements TcgResult {
+  public static class Rarity implements TcgResult {
     @JsonProperty
     int rarityId;
     @JsonProperty
