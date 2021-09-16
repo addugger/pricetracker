@@ -1,11 +1,16 @@
 package com.dugger.pricetracker.http.tcgp.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Products extends TcgGetJsonPojo<Products.Product> {
+    @Getter
     public static class Product implements TcgResult {
         @JsonProperty
         int productId;
@@ -31,9 +36,20 @@ public class Products extends TcgGetJsonPojo<Products.Product> {
         PresaleInfo presaleInfo;
         @JsonProperty
         List<ExtendedData> extendedData;
+
+        Map<String, String> extendedDataMap = null;
+
+        public Optional<String> getExtendedValue(String name) {
+            if (extendedDataMap == null && extendedData!= null && !extendedData.isEmpty()) {
+                extendedDataMap = extendedData.stream().collect(Collectors.toMap(ExtendedData::getName, ExtendedData::getName));
+            }
+            if (extendedDataMap != null) return Optional.ofNullable(extendedDataMap.get(name));
+            else return Optional.empty();
+        }
     }
 
-    protected static class Sku {
+    @Getter
+    public static class Sku {
         @JsonProperty
         int skuId;
         @JsonProperty
@@ -46,7 +62,8 @@ public class Products extends TcgGetJsonPojo<Products.Product> {
         int conditionId;
     }
 
-    protected static class PresaleInfo {
+    @Getter
+    public static class PresaleInfo {
         @JsonProperty
         boolean isPresale;
         @JsonProperty
@@ -55,7 +72,8 @@ public class Products extends TcgGetJsonPojo<Products.Product> {
         String note;
     }
 
-    protected static class ExtendedData {
+    @Getter
+    public static class ExtendedData {
         @JsonProperty
         String name;
         @JsonProperty

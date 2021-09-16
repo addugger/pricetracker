@@ -7,8 +7,10 @@ import com.dugger.pricetracker.data.tcgp.models.group.Group;
 import com.dugger.pricetracker.data.tcgp.models.group.GroupRepository;
 import com.dugger.pricetracker.data.tcgp.models.language.Language;
 import com.dugger.pricetracker.data.tcgp.models.language.LanguageRepository;
+import com.dugger.pricetracker.data.tcgp.models.printing.Printing;
 import com.dugger.pricetracker.data.tcgp.models.printing.PrintingRepository;
 import com.dugger.pricetracker.data.tcgp.models.product.ProductRepository;
+import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
 import com.dugger.pricetracker.data.tcgp.models.rarity.RarityRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import com.dugger.pricetracker.http.tcgp.models.*;
@@ -53,6 +55,7 @@ public class PricetrackerApplication {
 
       Products products = tcgPlayer.getGroupProducts(group.getGroupId(), 10, 0);
       Products.Product product = products.getResults().get(0);
+      Products.Sku sku = product.getSkus().get(0);
 
       Languages languages = tcgPlayer.getLanguages(catResult.getCategoryId());
       Languages.Language language = languages.getResults().get(0);
@@ -93,18 +96,32 @@ public class PricetrackerApplication {
       Group groupRetrieved = groupRepository.findById(group.getGroupId()).get();
 
       Language languageEntity = new Language();
-      languageEntity.setId(language.getLanguageId());
+      languageEntity.setId(sku.getLanguageId());
       languageEntity.setCategory(catRef);
       languageEntity.setName(language.getName());
       languageEntity.setAbbreviation(language.getAbbreviation());
       languageRepository.save(languageEntity);
 
       Condition conditionEntity = new Condition();
-      conditionEntity.setId(condition.getConditionId());
+      conditionEntity.setId(sku.getConditionId());
       conditionEntity.setCategory(catRef);
       conditionEntity.setName(condition.getName());
       conditionEntity.setAbbreviation(condition.getAbbreviation());
       conditionRepository.save(conditionEntity);
+
+      Rarity rarityEntity = new Rarity();
+      rarityEntity.setId(product.getExtendedValue("Rarity").orElseGet("-1"));
+      rarityEntity.setCategory(catRef);
+      rarityEntity.setName(rarity.getDisplayText());
+      rarityEntity.setAbbreviation(rarity.getDbValue());
+      rarityRepository.save(rarityEntity);
+
+      Printing printingEntity = new Printing();
+      printingEntity.setId(printing.getPrintingId());
+      printingEntity.setCategory(catRef);
+      printingEntity.setName(printing.getName());
+      printingEntity.setModified_on(printing.getModifiedOn());
+      printingRepository.save(printingEntity);
 
 
       logger.info("pause");
