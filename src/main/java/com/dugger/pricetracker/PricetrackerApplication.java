@@ -9,6 +9,7 @@ import com.dugger.pricetracker.data.tcgp.models.language.Language;
 import com.dugger.pricetracker.data.tcgp.models.language.LanguageRepository;
 import com.dugger.pricetracker.data.tcgp.models.printing.Printing;
 import com.dugger.pricetracker.data.tcgp.models.printing.PrintingRepository;
+import com.dugger.pricetracker.data.tcgp.models.product.Product;
 import com.dugger.pricetracker.data.tcgp.models.product.ProductRepository;
 import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
 import com.dugger.pricetracker.data.tcgp.models.rarity.RarityRepository;
@@ -130,6 +131,17 @@ public class PricetrackerApplication {
       printingEntity.setName(printing.getName());
       printingEntity.setModified_on(printing.getModifiedOn());
       printingRepository.save(printingEntity);
+
+      Product productEntity = new Product();
+      productEntity.setId(product.getProductId());
+      productEntity.setGroup(groupRepository.getById(group.getGroupId()));
+      productEntity.setCategory(catRef);
+      productEntity.setRarity(rarityRepository.getById(-1));
+      productEntity.setName(product.getName());
+      productEntity.setClean_name(product.getCleanName());
+      productEntity.setImage_url(product.getImageUrl());
+      productEntity.setModified_on(product.getModifiedOn());
+      productRepository.save(productEntity);
 
 
       logger.info("pause");
