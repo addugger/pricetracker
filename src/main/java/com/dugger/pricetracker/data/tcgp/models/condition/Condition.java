@@ -22,6 +22,7 @@ public class Condition {
   private String name;
   private String abbreviation;
   @CreationTimestamp
+  @Column(updatable = false)
   private Timestamp doe;
   @UpdateTimestamp
   private Timestamp dlu;

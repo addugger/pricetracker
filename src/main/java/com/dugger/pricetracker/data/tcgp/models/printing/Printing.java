@@ -22,6 +22,7 @@ public class Printing {
   private String name;
   private Timestamp modified_on;
   @CreationTimestamp
+  @Column(updatable = false)
   private Timestamp doe;
   @UpdateTimestamp
   private Timestamp dlu;

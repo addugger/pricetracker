@@ -1,13 +1,12 @@
 package com.dugger.pricetracker.data.tcgp.models.category;
 
+import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -23,7 +22,17 @@ public class Category {
   private String sealed_label;
   private String non_sealed_label;
   @CreationTimestamp
+  @Column(updatable = false)
   private Timestamp doe;
   @UpdateTimestamp
   private Timestamp dlu;
+
+  @PostPersist
+  public void addDefaultRarityId() {
+    Rarity defaultRarity = new Rarity();
+    defaultRarity.setId(Rarity.DEFAULT_ID);
+    defaultRarity.setCategory(this);
+    defaultRarity.setName(Rarity.DEFAULT_NAME);
+    defaultRarity.setAbbreviation(Rarity.DEFAULT_ABBREVIATION);
+  }
 }

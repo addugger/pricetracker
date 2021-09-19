@@ -14,6 +14,10 @@ import java.sql.Timestamp;
 @Setter
 @Table(schema = "tcgp", name = "tcgp_rarity")
 public class Rarity {
+  public final static int DEFAULT_ID = -1;
+  public final static String DEFAULT_NAME = "UNKNOWN RARITY";
+  public final static String DEFAULT_ABBREVIATION = "N/A";
+
   @Id
   private int id;
   @ManyToOne(fetch = FetchType.LAZY)
@@ -22,6 +26,7 @@ public class Rarity {
   private String name;
   private String abbreviation;
   @CreationTimestamp
+  @Column(updatable = false)
   private Timestamp doe;
   @UpdateTimestamp
   private Timestamp dlu;

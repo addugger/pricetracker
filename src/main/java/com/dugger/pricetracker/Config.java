@@ -1,15 +1,22 @@
 package com.dugger.pricetracker;
 
+import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
+import com.dugger.pricetracker.data.tcgp.models.rarity.RarityRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @Configuration
+@EnableJpaAuditing
 public class Config {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -25,4 +32,10 @@ public class Config {
 
   @Bean
   public TCGPlayer tcgPlayer() { return new TCGPlayer(); }
+
+  @Bean
+  @Profile("disabled")
+  public Map<String, Integer> tcgpRarities(RarityRepository rarityRepository) {
+    return rarityRepository.findAll().stream().collect(Collectors.toMap(Rarity::getAbbreviation, Rarity::getId));
+  }
 }

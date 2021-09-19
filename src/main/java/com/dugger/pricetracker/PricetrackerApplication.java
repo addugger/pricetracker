@@ -20,8 +20,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 import javax.persistence.EntityManager;
+import java.util.Map;
 
 @SpringBootApplication
 public class PricetrackerApplication {
@@ -34,6 +36,7 @@ public class PricetrackerApplication {
 
   @Bean
   public CommandLineRunner demo(TCGPlayer tcgPlayer,
+                                Map<String, Integer> tcgpRarities,
                                 CategoryRepository categoryRepository,
                                 GroupRepository groupRepository,
                                 ProductRepository productRepository,
@@ -110,7 +113,12 @@ public class PricetrackerApplication {
       conditionRepository.save(conditionEntity);
 
       Rarity rarityEntity = new Rarity();
-      rarityEntity.setId(product.getExtendedValue("Rarity").orElseGet("-1"));
+      rarityEntity.setId(
+          tcgpRarities.getOrDefault(
+              product.getExtendedValue("Rarity").orElse("UnknownRarity"),
+              Rarity.DEFAULT_ID
+          )
+      );
       rarityEntity.setCategory(catRef);
       rarityEntity.setName(rarity.getDisplayText());
       rarityEntity.setAbbreviation(rarity.getDbValue());
