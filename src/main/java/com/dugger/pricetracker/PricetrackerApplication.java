@@ -13,6 +13,8 @@ import com.dugger.pricetracker.data.tcgp.models.product.Product;
 import com.dugger.pricetracker.data.tcgp.models.product.ProductRepository;
 import com.dugger.pricetracker.data.tcgp.models.rarity.Rarity;
 import com.dugger.pricetracker.data.tcgp.models.rarity.RarityRepository;
+import com.dugger.pricetracker.data.tcgp.models.sku.Sku;
+import com.dugger.pricetracker.data.tcgp.models.sku.SkuRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import com.dugger.pricetracker.http.tcgp.models.*;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ public class PricetrackerApplication {
                                 CategoryRepository categoryRepository,
                                 GroupRepository groupRepository,
                                 ProductRepository productRepository,
+                                SkuRepository skuRepository,
                                 ConditionRepository conditionRepository,
                                 LanguageRepository languageRepository,
                                 PrintingRepository printingRepository,
@@ -126,7 +129,7 @@ public class PricetrackerApplication {
       rarityRepository.save(rarityEntity);
 
       Printing printingEntity = new Printing();
-      printingEntity.setId(printing.getPrintingId());
+      printingEntity.setId(sku.getPrintingId());
       printingEntity.setCategory(catRef);
       printingEntity.setName(printing.getName());
       printingEntity.setModified_on(printing.getModifiedOn());
@@ -143,16 +146,17 @@ public class PricetrackerApplication {
       productEntity.setModified_on(product.getModifiedOn());
       productRepository.save(productEntity);
 
+      Sku skuEntity = new Sku();
+      skuEntity.setId(sku.getSkuId());
+      skuEntity.setProduct(productRepository.getById(sku.getProductId()));
+      skuEntity.setLanguage(languageRepository.getById(sku.getLanguageId()));
+      skuEntity.setPrinting(printingRepository.getById(sku.getPrintingId()));
+      skuEntity.setCondition(conditionRepository.getById(sku.getConditionId()));
+      skuRepository.save(skuEntity);
+
+
 
       logger.info("pause");
-//      logger.info("All rows");
-//      logger.info("######################");
-//      repository.findAll().spliterator().forEachRemaining(row -> logger.info(row.toString()));
-//      logger.info("");
-//
-//      logger.info("Rows with last name Dugger");
-//      logger.info("#######################");
-//      repository.findByLastName("Dugger").forEach(row -> logger.info(row.toString()));
     };
   }
 
