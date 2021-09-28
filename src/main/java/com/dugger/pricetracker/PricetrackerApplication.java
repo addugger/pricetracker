@@ -17,15 +17,14 @@ import com.dugger.pricetracker.data.tcgp.models.sku.Sku;
 import com.dugger.pricetracker.data.tcgp.models.sku.SkuRepository;
 import com.dugger.pricetracker.http.tcgp.TCGPlayer;
 import com.dugger.pricetracker.http.tcgp.models.*;
+import com.dugger.pricetracker.mappers.TCGPMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 
-import javax.persistence.EntityManager;
 import java.util.Map;
 
 @SpringBootApplication
@@ -47,7 +46,8 @@ public class PricetrackerApplication {
                                 ConditionRepository conditionRepository,
                                 LanguageRepository languageRepository,
                                 PrintingRepository printingRepository,
-                                RarityRepository rarityRepository) {
+                                RarityRepository rarityRepository,
+                                TCGPMapper mapper) {
     return (args) -> {
 
       tcgPlayer.authenticate();
@@ -59,6 +59,7 @@ public class PricetrackerApplication {
       Groups groups = tcgPlayer.getCategoryGroups(catResult.getCategoryId(), 10, 0);
       Groups.Group group = groups.getResults().get(0);
 
+      Group mappedGroup = mapper.jsonToEntity(group);
 
       Products products = tcgPlayer.getGroupProducts(group.getGroupId(), 10, 0);
       Products.Product product = products.getResults().get(0);

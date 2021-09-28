@@ -1,4 +1,4 @@
-package com.dugger.pricetracker.mappers.tcgp;
+package com.dugger.pricetracker.mappers;
 
 import com.dugger.pricetracker.http.tcgp.models.Category;
 import org.junit.jupiter.api.Assertions;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 
-class CategoryMapperTest {
+class TCGPMapperTest {
 
   @Test
   void convertsCorrectly() {
@@ -15,7 +15,7 @@ class CategoryMapperTest {
         1, "name", modifiedOn, "displayName", "seoCategoryName",
         "sealedLabel", "nonSealedLabel", "conditionGuideUrl", true, 1, false
     );
-    com.dugger.pricetracker.data.tcgp.models.category.Category entityCat = new CategoryMapperImpl().convert(jsonCat);
+    com.dugger.pricetracker.data.tcgp.models.category.Category entityCat = new TCGPMapperImpl().jsonToEntity(jsonCat);
     Assertions.assertNotNull(entityCat);
     Assertions.assertEquals(1, entityCat.getId());
     Assertions.assertEquals("name", entityCat.getName());

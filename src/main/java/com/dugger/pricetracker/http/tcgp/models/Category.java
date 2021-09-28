@@ -41,6 +41,8 @@ public class Category extends TcgGetJsonPojo<Category.CategoryResult> {
     @JsonProperty
     boolean isDirect;
 
+    public CategoryResult() {}
+
     public CategoryResult(
         int categoryId, String name, Timestamp modifiedOn, String displayName, String seoCategoryName, String sealedLabel,
         String nonSealedLabel, String conditionGuideUrl, boolean isScannable, int popularity, boolean isDirect
